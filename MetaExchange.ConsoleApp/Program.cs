@@ -68,20 +68,7 @@ namespace MetaExchange.ConsoleApp
 
         private static bool TryParseOrderSide(string value, out OrderSide side)
         {
-            switch (value.Trim().ToLowerInvariant())
-            {
-                case "buy":
-                    side = OrderSide.Buy;
-                    return true;
-
-                case "sell":
-                    side = OrderSide.Sell;
-                    return true;
-
-                default:
-                    side = default;
-                    return false;
-            }
+            return Enum.TryParse(value.Trim(), ignoreCase: true, out side);
         }
 
         private static AppSettings? LoadSettings()
