@@ -1,7 +1,6 @@
-@MetaExchange.Api_HostAddress = http://localhost:5243
-
+@HostAddress = http://localhost:5243
 ### Buy 1.5 BTC
-POST {{MetaExchange.Api_HostAddress}}/api/execution-plan
+POST {{HostAddress}}/api/execution-plans
 Content-Type: application/json
 
 {
@@ -12,7 +11,7 @@ Content-Type: application/json
 ###
 
 ### Sell 2 BTC
-POST {{MetaExchange.Api_HostAddress}}/api/execution-plan
+POST {{HostAddress}}/api/execution-plans
 Content-Type: application/json
 
 {

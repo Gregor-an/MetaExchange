@@ -1,6 +1,6 @@
 # MetaExchange
 
-Work-in-progress solution for the BSDigital/CML Team coding task.
+Solution for the BSDigital/CML Team coding task.
 
 The application builds a best execution plan for buying or selling a requested BTC amount across multiple crypto exchanges.
 
@@ -9,18 +9,16 @@ The application builds a best execution plan for buying or selling a requested B
 Implemented:
 
 - Core execution planning logic
-- Console application for Part 1
-- Reading order books from the provided data file
-- Exchange balances from configuration
-- Buy and sell execution plans with full, partial, or no fill status
-- XML documentation for core models and service contracts
-
-Planned:
-
+- Console application
 - Web API endpoint
 - Swagger UI
-- Docker setup
-- Unit tests
+- Reading order books from the provided data file
+- Exchange balances from configuration
+
+Planned next:
+
+- Unit tests for the core execution planning logic
+- Local Docker setup for the Web API
 
 ## Approach
 
@@ -76,12 +74,38 @@ Arguments:
 <amount>     BTC amount, for example 9 or 0.5
 ```
 
+## Run Web API
+
+```bash
+dotnet run --project MetaExchange.Api
+```
+
+Swagger UI is available at `/swagger` on the running API host.
+
+For local development, it is usually available at:
+
+```text
+http://localhost:5243/swagger
+```
+
+Example request — `POST /api/execution-plans`:
+
+```json
+{
+  "side": "Buy",
+  "amount": 1.5
+}
+```
+
+`side` accepts `"Buy"` or `"Sell"`.
+
 ## Configuration
 
-Exchange balances are configured in:
+Exchange balances are configured in `appsettings.json` of the respective project:
 
 ```text
 MetaExchange.ConsoleApp/appsettings.json
+MetaExchange.Api/appsettings.json
 ```
 
 Example:
@@ -91,7 +115,7 @@ Example:
   "DataFile": "order_books_data",
   "Exchanges": [
     { "Id": "Exchange_1", "EurBalance": 10000, "BtcBalance": 5 },
-    { "Id": "Exchange_2", "EurBalance": 5000, "BtcBalance": 3 },
+    { "Id": "Exchange_2", "EurBalance": 5000,  "BtcBalance": 3 },
     { "Id": "Exchange_3", "EurBalance": 15000, "BtcBalance": 8 }
   ]
 }
@@ -111,6 +135,6 @@ MetaExchange.sln
 │       ├── IExecutionPlanService
 │       ├── ExecutionPlanService
 │       └── OrderBookReader
-├── MetaExchange.ConsoleApp    # Part 1 console application
-└── MetaExchange.Api           # Part 2 Web API
+├── MetaExchange.ConsoleApp    # Console application
+└── MetaExchange.Api           # Web API with Swagger
 ```
