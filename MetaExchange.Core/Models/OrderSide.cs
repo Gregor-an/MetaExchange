@@ -1,13 +1,18 @@
 namespace MetaExchange.Core.Models
 {
     /// <summary>
-    /// Specifies the side of an order.
+    /// Specifies whether an order buys or sells BTC.
     /// </summary>
     public enum OrderSide
     {
-        /// <summary>Buy BTC using EUR.</summary>
+        /// <summary>
+        /// Buy BTC using EUR.
+        /// </summary>
         Buy,
-        /// <summary>Sell BTC for EUR.</summary>
+
+        /// <summary>
+        /// Sell BTC for EUR.
+        /// </summary>
         Sell
     }
 }

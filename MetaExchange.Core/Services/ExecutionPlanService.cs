@@ -1,9 +1,10 @@
 using MetaExchange.Core.Models;
+using System.Threading.Tasks;
 
 namespace MetaExchange.Core.Services
 {
     /// <summary>
-    /// Builds the best execution plan across multiple exchanges using a greedy algorithm.
+    /// Builds the best execution plan across multiple exchanges.
     /// </summary>
     public class ExecutionPlanService : IExecutionPlanService
     {
@@ -38,7 +39,14 @@ namespace MetaExchange.Core.Services
                 decimal amount = Math.Min(remaining, Math.Min(ask.Amount, exchange.EurBalance / ask.Price));
                 if (amount <= 0) continue;
 
-                orders.Add(new ExecutionOrder(exchange.Id, OrderSide.Buy, amount, ask.Price, amount * ask.Price));
+                orders.Add(new ExecutionOrder
+                {
+                    ExchangeId = exchange.Id,
+                    Side = OrderSide.Buy,
+                    Amount = amount,
+                    Price = ask.Price
+                });
+
                 exchange.EurBalance -= amount * ask.Price;
                 remaining -= amount;
             }
@@ -63,7 +71,13 @@ namespace MetaExchange.Core.Services
                 decimal amount = Math.Min(remaining, Math.Min(bid.Amount, exchange.BtcBalance));
                 if (amount <= 0) continue;
 
-                orders.Add(new ExecutionOrder(exchange.Id, OrderSide.Sell, amount, bid.Price, amount * bid.Price));
+                orders.Add(new ExecutionOrder
+                {
+                    ExchangeId = exchange.Id,
+                    Side = OrderSide.Sell,
+                    Amount = amount,
+                    Price = bid.Price
+                });
                 exchange.BtcBalance -= amount;
                 remaining -= amount;
             }
@@ -82,7 +96,14 @@ namespace MetaExchange.Core.Services
                 remaining <= 0   ? FillStatus.FullyFilled :
                                    FillStatus.PartiallyFilled;
 
-            return new ExecutionPlan(orders, totalBtc, totalEur, avgPrice, status);
+            return new ExecutionPlan
+            {
+                Orders = orders,
+                TotalBtc = totalBtc,
+                TotalEur = totalEur,
+                AveragePrice = avgPrice,
+                Status = status
+            };
         }
     }
 }

@@ -5,11 +5,19 @@ namespace MetaExchange.Core.Models
     /// </summary>
     public enum FillStatus
     {
-        /// <summary>The full requested amount was executed.</summary>
-        FullyFilled,
-        /// <summary>Only part of the requested amount was executed.</summary>
+        /// <summary>
+        /// No amount was executed because of insufficient liquidity or balance.
+        /// </summary>
+        NotFilled,
+
+        /// <summary>
+        /// Only part of the requested amount was executed.
+        /// </summary>
         PartiallyFilled,
-        /// <summary>No amount was executed (insufficient liquidity or balance).</summary>
-        NotFilled
+
+        /// <summary>
+        /// The full requested amount was executed.
+        /// </summary>
+        FullyFilled
     }
 }

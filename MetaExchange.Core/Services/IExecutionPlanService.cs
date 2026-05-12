@@ -3,13 +3,13 @@ using MetaExchange.Core.Models;
 namespace MetaExchange.Core.Services
 {
     /// <summary>
-    /// Defines the contract for building a best execution plan
+    /// Defines the contract for building a best execution plan.
     /// across multiple exchanges.
     /// </summary>
     public interface IExecutionPlanService
     {
         /// <summary>
-        /// Builds the optimal execution plan for the given order side and BTC amount.
+        /// Builds the best available execution plan for the specified order side and BTC amount.
         /// </summary>
         /// <param name="exchanges">Available exchanges with their order books and balances.</param>
         /// <param name="side">Whether to buy or sell BTC.</param>

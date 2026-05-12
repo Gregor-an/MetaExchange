@@ -4,7 +4,7 @@ using MetaExchange.Core.Models;
 namespace MetaExchange.Core.Services
 {
     /// <summary>
-    /// Reads order book snapshots from a line-delimited JSON file.
+    /// Reads order books from a line-delimited JSON file.
     /// </summary>
     public static class OrderBookReader
     {

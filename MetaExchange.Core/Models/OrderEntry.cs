@@ -1,7 +1,13 @@
 namespace MetaExchange.Core.Models
 {
     /// <summary>
-    /// Wraps a single <see cref="Order"/> as an entry in the order book.
+    /// Represents an order book entry containing a single order.
     /// </summary>
-    public record OrderEntry(Order Order);
+    public sealed record OrderEntry
+    {
+        /// <summary>
+        /// Order data for this entry.
+        /// </summary>
+        public required Order Order { get; init; }
+    }
 }

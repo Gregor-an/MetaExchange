@@ -1,14 +1,23 @@
 namespace MetaExchange.Core.Models
 {
     /// <summary>
-    /// Represents a snapshot of an exchange order book at a given point in time.
+    /// Represents an exchange order book at a given point in time.
     /// </summary>
-    public record OrderBook(
-        /// <summary>Time when the snapshot was acquired.</summary>
-        DateTime AcqTime,
-        /// <summary>Buy orders (bids), sorted by price descending.</summary>
-        List<OrderEntry> Bids,
-        /// <summary>Sell orders (asks), sorted by price ascending.</summary>
-        List<OrderEntry> Asks
-    );
+    public sealed record OrderBook
+    {
+        /// <summary>
+        /// Time when the order book was acquired.
+        /// </summary>
+        public DateTime AcqTime { get; init; }
+
+        /// <summary>
+        /// Buy orders available in the order book.
+        /// </summary>
+        public required List<OrderEntry> Bids { get; init; }
+
+        /// <summary>
+        /// Sell orders available in the order book.
+        /// </summary>
+        public required List<OrderEntry> Asks { get; init; }
+    }
 }
