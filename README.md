@@ -66,6 +66,5 @@ dotnet run --project MetaExchange.ConsoleApp -- sell 5
 ```text
 MetaExchange.sln
 ├── MetaExchange.Core
-├── MetaExchange.ConsoleApp
-└── MetaExchange.Api
+└── MetaExchange.ConsoleApp
 ```
