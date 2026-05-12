@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MetaExchange.Api.Configuration;
 using MetaExchange.Core.Services;
 
@@ -12,10 +13,14 @@ namespace MetaExchange.Api
             builder.Services.Configure<ExchangeSettings>(builder.Configuration);
             builder.Services.AddSingleton<IExecutionPlanService, ExecutionPlanService>();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(options =>
             {
+                options.UseInlineDefinitionsForEnums();
                 var xmlFile = $"{typeof(Program).Assembly.GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
