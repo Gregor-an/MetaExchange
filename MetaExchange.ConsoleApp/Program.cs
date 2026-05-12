@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using System.Text.Json;
 using MetaExchange.Core.Models;
