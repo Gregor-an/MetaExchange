@@ -2,18 +2,20 @@ using MetaExchange.Core.Models;
 
 namespace MetaExchange.Core.Services
 {
-    public static class MetaExchangeEngine
+    /// <summary>
+    /// Builds the best execution plan across multiple exchanges using a greedy algorithm.
+    /// </summary>
+    public class ExecutionPlanService : IExecutionPlanService
     {
-        public static ExecutionPlan BuildExecutionPlan(IReadOnlyCollection<Exchange> exchanges, OrderSide side, decimal btcAmount)
+        /// <inheritdoc/>
+        public ExecutionPlan BuildExecutionPlan(IReadOnlyCollection<Exchange> exchanges, OrderSide side, decimal btcAmount)
         {
             if (btcAmount <= 0)
-            {
                 throw new ArgumentException("BTC amount must be greater than zero.", nameof(btcAmount));
-            }
 
             return side switch
             {
-                OrderSide.Buy => Buy(exchanges, btcAmount),
+                OrderSide.Buy  => Buy(exchanges, btcAmount),
                 OrderSide.Sell => Sell(exchanges, btcAmount),
                 _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
             };
@@ -31,27 +33,12 @@ namespace MetaExchange.Core.Services
 
             foreach (var (exchange, ask) in allAsks)
             {
-                if (remaining <= 0)
-                {
-                    break;
-                }
+                if (remaining <= 0) break;
 
-                decimal maxByOrderBook = ask.Amount;
-                decimal maxByBalance = exchange.EurBalance / ask.Price;
-                decimal amount = Math.Min(remaining, Math.Min(maxByOrderBook, maxByBalance));
+                decimal amount = Math.Min(remaining, Math.Min(ask.Amount, exchange.EurBalance / ask.Price));
+                if (amount <= 0) continue;
 
-                if (amount <= 0)
-                {
-                    continue;
-                }
-
-                orders.Add(new ExecutionOrder(
-                    exchange.Id,
-                    OrderSide.Buy,
-                    amount,
-                    ask.Price,
-                    amount * ask.Price));
-
+                orders.Add(new ExecutionOrder(exchange.Id, OrderSide.Buy, amount, ask.Price, amount * ask.Price));
                 exchange.EurBalance -= amount * ask.Price;
                 remaining -= amount;
             }
@@ -71,31 +58,12 @@ namespace MetaExchange.Core.Services
 
             foreach (var (exchange, bid) in allBids)
             {
-                if (remaining <= 0)
-                {
-                    break;
-                }
+                if (remaining <= 0) break;
 
-                decimal maxByOrderBook = bid.Amount;
-                decimal maxByBalance = exchange.BtcBalance;
-                decimal amount = Math.Min(remaining, Math.Min(maxByOrderBook, maxByBalance));
+                decimal amount = Math.Min(remaining, Math.Min(bid.Amount, exchange.BtcBalance));
+                if (amount <= 0) continue;
 
-                if (amount <= 0)
-                {
-                    continue;
-                }
-
-                orders.Add(
-                    new ExecutionOrder
-                    (
-                        exchange.Id,
-                        OrderSide.Sell,
-                        amount,
-                        bid.Price,
-                        amount * bid.Price
-                    )
-                );
-
+                orders.Add(new ExecutionOrder(exchange.Id, OrderSide.Sell, amount, bid.Price, amount * bid.Price));
                 exchange.BtcBalance -= amount;
                 remaining -= amount;
             }
@@ -110,9 +78,9 @@ namespace MetaExchange.Core.Services
             decimal avgPrice = totalBtc > 0 ? totalEur / totalBtc : 0;
 
             FillStatus status =
-                totalBtc == 0 ? FillStatus.NotFilled :
-                remaining <= 0 ? FillStatus.FullyFilled :
-                FillStatus.PartiallyFilled;
+                totalBtc == 0    ? FillStatus.NotFilled :
+                remaining <= 0   ? FillStatus.FullyFilled :
+                                   FillStatus.PartiallyFilled;
 
             return new ExecutionPlan(orders, totalBtc, totalEur, avgPrice, status);
         }

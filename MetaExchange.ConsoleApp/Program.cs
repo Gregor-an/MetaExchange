@@ -60,7 +60,8 @@ namespace MetaExchange.ConsoleApp
                 })
                 .ToList();
 
-            ExecutionPlan plan = MetaExchangeEngine.BuildExecutionPlan(exchanges, side, amount);
+            IExecutionPlanService service = new ExecutionPlanService();
+            ExecutionPlan plan = service.BuildExecutionPlan(exchanges, side, amount);
 
             PrintPlan(plan, side, amount);
         }
