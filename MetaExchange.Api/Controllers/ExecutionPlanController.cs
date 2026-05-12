@@ -34,13 +34,16 @@ namespace MetaExchange.Api.Controllers
         /// and greedily fills the requested amount while respecting each exchange's balance constraints.
         /// </remarks>
         /// <param name="request">Order side (Buy or Sell) and the BTC amount to execute.</param>
+        /// <param name="cancellationToken">Token used to cancel the request.</param>
         /// <returns>An execution plan containing the list of orders and summary statistics.</returns>
         /// <response code="200">The execution plan was computed successfully.</response>
+        /// <response code="400">The request is invalid.</response>
         /// <response code="500">The server is not configured correctly or the data file cannot be read.</response>
         [HttpPost]
         [ProducesResponseType(typeof(ExecutionPlan), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ExecutionPlan> CreateExecutionPlan([FromBody] ExecutionPlanRequest request)
+        public async Task<ActionResult<ExecutionPlan>> CreateExecutionPlan([FromBody] ExecutionPlanRequest request, CancellationToken cancellationToken)
         {
             if (request.Amount <= 0)
             {
@@ -56,11 +59,11 @@ namespace MetaExchange.Api.Controllers
                 return Problem(detail: $"Data file not found: {dataFile}", statusCode: StatusCodes.Status500InternalServerError);
             }
 
-            List<OrderBook> orderBooks = OrderBookReader.ReadFromFile(dataFile, _settings.Exchanges.Count);
+            List<OrderBook> orderBooks = await OrderBookReader.ReadFromFileAsync(dataFile, _settings.Exchanges.Count, cancellationToken);
 
             if (orderBooks.Count == 0)
             {
-                return Problem(detail: "No order books were loaded from the data file.", statusCode: StatusCodes.Status500InternalServerError);
+                return Problem(detail: "No exchanges are configured.", statusCode: StatusCodes.Status500InternalServerError);
             }
 
             List<Exchange> exchanges = _settings.Exchanges
