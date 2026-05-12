@@ -1,6 +1,23 @@
 @MetaExchange.Api_HostAddress = http://localhost:5243
 
-GET {{MetaExchange.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Buy 1.5 BTC
+POST {{MetaExchange.Api_HostAddress}}/api/execution-plan
+Content-Type: application/json
+
+{
+  "side": "Buy",
+  "amount": 1.5
+}
+
+###
+
+### Sell 2 BTC
+POST {{MetaExchange.Api_HostAddress}}/api/execution-plan
+Content-Type: application/json
+
+{
+  "side": "Sell",
+  "amount": 2
+}
 
 ###

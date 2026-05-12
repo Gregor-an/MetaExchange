@@ -1,3 +1,5 @@
+using MetaExchange.Api.Configuration;
+using MetaExchange.Core.Services;
 
 namespace MetaExchange.Api
 {
@@ -7,16 +9,25 @@ namespace MetaExchange.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.Configure<ExchangeSettings>(builder.Configuration);
+            builder.Services.AddSingleton<IExecutionPlanService, ExecutionPlanService>();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var xmlFile = $"{typeof(Program).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+
+                var coreXmlFile = "MetaExchange.Core.xml";
+                var coreXmlPath = Path.Combine(AppContext.BaseDirectory, coreXmlFile);
+                if (File.Exists(coreXmlPath))
+                    options.IncludeXmlComments(coreXmlPath);
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -24,12 +35,8 @@ namespace MetaExchange.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
