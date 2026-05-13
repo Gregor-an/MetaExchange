@@ -41,7 +41,8 @@ namespace MetaExchange.ConsoleApp
                 return;
             }
 
-            List<OrderBook> orderBooks = OrderBookReader.ReadFromFile(dataFile, settings.Exchanges.Count);
+            IOrderBookReader orderBookReader = new OrderBookReader();
+            List<OrderBook> orderBooks = orderBookReader.ReadFromFile(dataFile, settings.Exchanges.Count);
             if (orderBooks.Count == 0)
             {
                 Console.WriteLine("Error: no order books loaded from file.");

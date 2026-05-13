@@ -15,14 +15,16 @@ namespace MetaExchange.Api.Controllers
     public sealed class ExecutionPlanController : ControllerBase
     {
         private readonly IExecutionPlanService _service;
+        private readonly IOrderBookReader _orderBookReader;
         private readonly ExchangeSettings _settings;
 
         /// <summary>
         /// Initializes a new instance of <see cref="ExecutionPlanController"/>.
         /// </summary>
-        public ExecutionPlanController(IExecutionPlanService service, IOptions<ExchangeSettings> settings)
+        public ExecutionPlanController(IExecutionPlanService service, IOrderBookReader orderBookReader, IOptions<ExchangeSettings> settings)
         {
             _service = service;
+            _orderBookReader = orderBookReader;
             _settings = settings.Value;
         }
 
@@ -59,7 +61,7 @@ namespace MetaExchange.Api.Controllers
                 return Problem(detail: $"Data file not found: {dataFile}", statusCode: StatusCodes.Status500InternalServerError);
             }
 
-            List<OrderBook> orderBooks = await OrderBookReader.ReadFromFileAsync(dataFile, _settings.Exchanges.Count, cancellationToken);
+            List<OrderBook> orderBooks = await _orderBookReader.ReadFromFileAsync(dataFile, _settings.Exchanges.Count, cancellationToken);
 
             if (orderBooks.Count == 0)
             {

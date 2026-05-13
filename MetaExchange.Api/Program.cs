@@ -11,7 +11,8 @@ namespace MetaExchange.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.Configure<ExchangeSettings>(builder.Configuration);
-            builder.Services.AddSingleton<IExecutionPlanService, ExecutionPlanService>();
+            builder.Services.AddScoped<IExecutionPlanService, ExecutionPlanService>();
+            builder.Services.AddScoped<IOrderBookReader, OrderBookReader>();
 
             builder.Services.AddControllers()
                 .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
