@@ -10,15 +10,9 @@ Implemented:
 
 - Core execution planning logic
 - Console application
-- Web API endpoint
-- Swagger UI
-- Reading order books from the provided data file
-- Exchange balances from configuration
-
-Planned next:
-
+- Web API endpoint with Swagger UI
 - Unit tests for the core execution planning logic
-- Local Docker setup for the Web API
+- Docker support
 
 ## Approach
 
@@ -31,6 +25,7 @@ Each exchange has its own EUR and BTC balance. These balances are treated as fun
 ## Requirements
 
 - .NET 8 SDK
+- Docker (optional, only for Docker run)
 
 Check installed version:
 
@@ -88,7 +83,7 @@ For local development, it is usually available at:
 http://localhost:5243/swagger
 ```
 
-Example request — `POST /api/execution-plans`:
+Example request for `POST /api/execution-plans`:
 
 ```json
 {
@@ -110,13 +105,19 @@ docker build -t metaexchange-api .
 Run the container:
 
 ```bash
-docker run -p 8080:8080 metaexchange-api
+docker run --rm -p 8080:8080 --name metaexchange-api metaexchange-api
 ```
 
 Swagger UI will be available at:
 
 ```text
 http://localhost:8080/swagger
+```
+
+## Run tests
+
+```bash
+dotnet test
 ```
 
 ## Configuration
@@ -154,7 +155,9 @@ MetaExchange.sln
 │   └── Services
 │       ├── IExecutionPlanService
 │       ├── ExecutionPlanService
+│       ├── IOrderBookReader
 │       └── OrderBookReader
 ├── MetaExchange.ConsoleApp    # Console application
-└── MetaExchange.Api           # Web API with Swagger
+├── MetaExchange.Api           # Web API with Swagger
+└── MetaExchange.Tests         # Unit tests (xUnit)
 ```
