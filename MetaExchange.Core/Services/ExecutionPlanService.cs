@@ -90,19 +90,29 @@ namespace MetaExchange.Core.Services
             decimal totalEur = orders.Sum(o => o.Total);
             decimal avgPrice = totalBtc > 0 ? totalEur / totalBtc : 0;
 
-            FillStatus status =
-                totalBtc == 0    ? FillStatus.NotFilled :
-                remaining <= 0   ? FillStatus.FullyFilled :
-                                   FillStatus.PartiallyFilled;
-
             return new ExecutionPlan
             {
                 Orders = orders,
                 TotalBtc = totalBtc,
                 TotalEur = totalEur,
                 AveragePrice = avgPrice,
-                Status = status
+                Status = GetFillStatus(totalBtc, remaining)
             };
+        }
+
+        private static FillStatus GetFillStatus(decimal totalBtc, decimal remaining)
+        {
+            if (totalBtc == 0)
+            {
+                return FillStatus.NotFilled;
+            }
+
+            if (remaining <= 0)
+            {
+                return FillStatus.FullyFilled;
+            }
+
+            return FillStatus.PartiallyFilled;
         }
     }
 }
