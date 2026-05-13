@@ -99,6 +99,26 @@ Example request — `POST /api/execution-plans`:
 
 `side` accepts `"Buy"` or `"Sell"`.
 
+## Run with Docker
+
+Build the image:
+
+```bash
+docker build -t metaexchange-api .
+```
+
+Run the container:
+
+```bash
+docker run -p 8080:8080 metaexchange-api
+```
+
+Swagger UI will be available at:
+
+```text
+http://localhost:8080/swagger
+```
+
 ## Configuration
 
 Exchange balances are configured in `appsettings.json` of the respective project:
