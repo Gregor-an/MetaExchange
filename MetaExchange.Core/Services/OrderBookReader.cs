@@ -16,6 +16,11 @@ namespace MetaExchange.Core.Services
         /// <inheritdoc/>
         public List<OrderBook> ReadFromFile(string filePath, int count)
         {
+            if (count <= 0)
+            {
+                return [];
+            }
+
             var result = new List<OrderBook>();
 
             foreach (var line in File.ReadLines(filePath).Take(count))
@@ -33,6 +38,11 @@ namespace MetaExchange.Core.Services
         /// <inheritdoc/>
         public async Task<List<OrderBook>> ReadFromFileAsync(string filePath, int count, CancellationToken cancellationToken = default)
         {
+            if (count <= 0)
+            {
+                return [];
+            }
+
             var result = new List<OrderBook>();
 
             await foreach (var line in File.ReadLinesAsync(filePath, cancellationToken))
